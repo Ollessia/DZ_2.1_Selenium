@@ -14,17 +14,18 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class CallbackTest {
+public class CallbackTest {
     private WebDriver driver;
 
     @BeforeAll
-    static void setUpAll() {
+    public static void setUpAll() {
         WebDriverManager.chromedriver().setup();
     }
 
     @BeforeEach
-    void setUp() {
+    public void BeforeEach() {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--no-sandbox");
@@ -34,19 +35,22 @@ class CallbackTest {
     }
 
     @AfterEach
-    void tearDown() {
+    public void AfterEach() {
         driver.quit();
         driver = null;
+
     }
+
     @Test
-    void shouldTestV2() {
-        WebElement form = driver.findElement(By.cssSelector("[data-test-id=callback-form]"));
-        form.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Василий");
-        form.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79270000000");
-        form.findElement(By.cssSelector("[data-test-id=agreement]")).click();
-        form.findElement(By.cssSelector("[data-test-id=submit]")).click();
-        String text = driver.findElement(By.className("alert-success")).getText();
-        assertEquals("Ваша заявка успешно отправлена!", text.trim());
+    void shouldCallbackTest() {
+
+        driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Алиса");
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79590000000");
+        driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
+        driver.findElement(By.cssSelector("button.button")).click();
+        WebElement actualElements = driver.findElement(By.cssSelector("[data-test-id=order-success]"));
+        String text = actualElements.getText().trim();
+        assertEquals("Ваша заявка успешно отправлена!Наш менеджер свяжется с вам в ближайшее время.", text);
+        assertTrue(actualElements.isDisplayed());
     }
 }
-
